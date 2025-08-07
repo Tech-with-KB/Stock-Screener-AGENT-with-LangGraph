@@ -38,7 +38,7 @@ def simple_screener(screen_type:str, offset:int)-> str:
         json.dump(result, f) 
 
     # Extract the data we need 
-    fields = ["shortName", "bid", "ask", "exchange", "fiftyTwoWeekHigh", "fiftyTwoWeekLow", "averageAnalystRating", "dividendYield", "symbol"] 
+    fields = ["shortName", "dividendYield", "symbol"] 
     output_data = []
     for stock_detail in result['quotes']: 
         details = {}
@@ -47,7 +47,22 @@ def simple_screener(screen_type:str, offset:int)-> str:
                 details[key] = val 
         output_data.append(details) 
     
-    return f"Stock Screener Results: {output_data}"
+    # Format the output
+    formatted_stocks = []
+    for stock in output_data:
+        name = stock.get('shortName', 'N/A')
+        symbol = stock.get('symbol', 'N/A')
+        yield_value = stock.get('dividendYield')
+        if yield_value:
+            yield_percent = f"{yield_value * 100:.2f}%"
+            formatted_stocks.append(f"- **{name}** (Symbol: {symbol}), with a dividend yield of {yield_percent}")
+        else:
+            formatted_stocks.append(f"- **{name}** (Symbol: {symbol})")
+
+
+    preamble = f"Here are some {screen_type.replace('_', ' ')} stocks that match your criteria:\n\n"
+    note = "\n\nPlease note that the data provided includes stocks from various exchanges and regions, including NYQ for New York Stock Exchange, NMS for Nasdaq Market, and others. The dividend yields shown are in percentage terms."
+    return preamble + "\n".join(formatted_stocks) + note
 
 if __name__ == '__main__': 
     print(simple_screener({"screen_type":"day_gainers", "offset":0}))

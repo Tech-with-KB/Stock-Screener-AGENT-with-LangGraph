@@ -10,9 +10,7 @@ from langgraph.prebuilt import ToolNode
 from Tools.tool import simple_screener
 
 # 2. Create an LLM
-# llm = ChatOllama(model="gpt-oss:latest")
-# llm = ChatOllama(model="deepseek-r1:1.5b")
-llm = ChatOllama(model="qwen2.5:1.5b")
+llm = ChatOllama(model="gpt-oss:latest")
 
 # 3. Create tool
 tools = [simple_screener]
